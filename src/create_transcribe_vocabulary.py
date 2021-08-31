@@ -85,12 +85,26 @@ def lambda_handler(event, context):
     vocabularyName = id_generator()
 
     # Create the vocabulary
-    response = transcribe_client.create_vocabulary(
-        VocabularyName=vocabularyName,
-        LanguageCode='en-US',
-        Phrases=vocabularyTerms
-    )
-    print('created vocabulary:' + vocabularyName)
+    try:
+        response = transcribe_client.create_vocabulary(
+            VocabularyName=vocabularyName,
+            LanguageCode='en-US',
+            Phrases=vocabularyTerms
+        )
+        print('created vocabulary:' + vocabularyName)
+    except BadRequestException, e:
+        return {
+            "status": "error",
+            "name": None,
+            "mapping": {}
+        }
+    else:
+        print("Something unexpected happened...")
+        return {
+            "status": "error",
+            "name": None,
+            "mapping": {}
+        }
 
 
     mappingKey = 'podcasts/vocabularyMapping/' + id_generator() + '.json'
